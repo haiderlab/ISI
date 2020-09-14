@@ -4,7 +4,6 @@ addpath(genpath('More'))
 addpath(genpath('New_Imager'))
 addpath(genpath('General_Testing_Material'))
 
-
 %%
 global inputM;
 inputM.mouseID = 'Mouse_12_M200707_1';
@@ -16,7 +15,6 @@ inputM.ses = '4';
 
 slaveIP = '143.215.230.184'; % slaveIP of surgery room
 
-
 global lightval
 lightval = 'INT0=4000';
 modlight = Adjust_Light;
@@ -24,11 +22,6 @@ waitfor(modlight);
 
 imagerGUI = Imager;
 waitfor(imagerGUI);
+
 %%
 Stimulator(slaveIP);
-
-
-%%
-
-
-
