@@ -1,0 +1,27 @@
+function refreshLooperView
+
+global Lstate GUIhandles
+
+set(GUIhandles.looper.repeats,'string',Lstate.reps)
+set(GUIhandles.looper.randomflag,'value',Lstate.rand)
+
+%set(GUIhandles.looper.formula,'string',Lstate.formula)
+
+for i = 1:length(L)
+
+set(GUIhandles.looper.symbol1,'string',Lstate.param{1}{1})
+set(GUIhandles.looper.valvec1,'string',Lstate.param{1}{2})
+
+set(GUIhandles.looper.symbol2,'string',Lstate.param{2}{1})
+set(GUIhandles.looper.valvec2,'string',Lstate.param{2}{2})
+
+set(GUIhandles.looper.symbol3,'string',Lstate.param{3}{1})
+set(GUIhandles.looper.valvec3,'string',Lstate.param{3}{2})
+
+set(GUIhandles.looper.symbol4,'string',Lstate.param{4}{1})
+set(GUIhandles.looper.valvec4,'string',Lstate.param{4}{2})
+
+set(GUIhandles.looper.symbol5,'string',Lstate.param{5}{1})
+set(GUIhandles.looper.valvec5,'string',Lstate.param{5}{2})
+
+

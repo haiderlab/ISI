@@ -1,0 +1,17 @@
+function Stimulator
+
+%Initialize stimulus parameter structures
+configurePstate('PG')
+configureMstate
+configureLstate
+
+%Host-Host communication
+configDisplayCom    %stimulus computer
+udpACQConfig     %acquisition computer
+
+configEyeShutter
+
+%Open GUIs
+MainWindow
+Looper 
+paramSelect

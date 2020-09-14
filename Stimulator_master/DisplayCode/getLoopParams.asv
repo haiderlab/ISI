@@ -1,0 +1,12 @@
+function getLoopParams
+
+global Lstate
+
+%Get number of looper parameters
+
+for i = 1:length(Lstate.param)
+    param{i} = Lstate.param{i}{1};
+    if ~isempty(Lstate.param{i}{1})
+        Nparam = Nparam+1;
+    end
+end

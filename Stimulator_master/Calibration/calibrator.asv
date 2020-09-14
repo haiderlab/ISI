@@ -1,0 +1,83 @@
+function calibrator
+
+global DcomState
+
+configDisplayCom    %stimulus computer
+
+PR701 = serial('COM6','BaudRate',9600,'DataBits',8,'Parity','none','StopBits',1,'FlowControl','hardware','InputBufferSize',4096);
+fopen(PR701)
+
+fprintf(PR701,['PR701'])   %initiate Remote control
+pause(5)
+
+%clear the input buffer
+n = get(PR701,'BytesAvailable');
+if n > 0
+    bout = fread(PR701,n); 
+else
+    bout = ''
+end 
+sprintf('%c',bout)
+
+fprintf(PR701,'S,,,,,1000,0,1,0,0,1')  
+pause(2)
+
+%clear the input buffer
+n = get(PR701,'BytesAvailable');
+if n > 0
+    bout = fread(PR701,n); 
+else
+    bout = '';
+end 
+sprintf('%c',bout)
+
+
+res=[800 600];  %pixel size of the screen
+screenNum=0;
+ptr = Screen('OpenWindow',screenNum,0,[0 0 res(1) res(2)]);
+dom =0:5:255;
+
+
+fid = fopen('luminance_LCD','w');
+for i=1:3
+    for k=1:length(dom)
+        
+        j = dom(k);
+        RGB = num2str(000);
+        RGB(i) = num2str(j);
+        %             Screen('FillRect',ptr,RGB,[0 0 res(1) res(2)]);
+        %             Screen('Flip',ptr);
+
+
+        fwrite(DcomState.serialPortHandle,['Q;RGB;' RGB '~']); %Give display command
+        waitforDisplayResp
+
+        sprintf('Measuring Gun #%d = %d\n',i,j)
+
+        %Make sure buffer is clear before write command
+        n = get(PR701,'BytesAvailable');
+        if n > 0
+            fread(PR701,n);
+        end
+
+        %Make measurement
+        fprintf(PR701,['M1' 13]);
+
+        %Wait for response
+        n = 0;
+        while n == 0
+            n = get(PR701,'BytesAvailable');
+        end
+        pause(4) %let it get the rest of the string
+        n = get(PR701,'BytesAvailable');
+        bout = fread(PR701,n);
+        sprintf('%c',bout)
+
+        %Write to file
+        fprintf(fid,'%c',bout);
+
+    end
+end
+
+%close display
+fwrite(DcomState.serialPortHandle,'C;~')

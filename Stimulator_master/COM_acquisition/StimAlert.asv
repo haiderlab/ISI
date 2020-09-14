@@ -1,0 +1,18 @@
+function StimAlert(obj,event)
+%Callback function from Stimulus PC
+
+'Callback'
+
+global gh
+
+setGUIValue(gh.mainControls.baseName, 'Ian')
+
+fgetl(state.stim.serialPortHandle)
+
+% n=get(state.stim.serialPortHandle,'BytesAvailable');
+% if n > 0
+%     temp=fread(state.stim.serialPortHandle,n); 
+% end
+% 
+% fclose(obj)
+% fopen(obj)

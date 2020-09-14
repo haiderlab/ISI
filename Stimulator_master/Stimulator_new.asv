@@ -1,0 +1,43 @@
+function Stimulator_new
+
+addpath(genpath('C:\ISI_processing_new'))
+rmpath(genpath('C:\ISI_processing'))
+
+addpath(genpath('C:\Stimulator_master'))
+rmpath(genpath('C:\ISI_processing'))
+
+%Remove paths of old version
+rmpath('C:\Stimulator_master\COM')
+rmpath('C:\Stimulator_master\COM_display')
+rmpath('C:\Stimulator_master\DisplayCode')
+rmpath('C:\Stimulator_master\GUIs')
+rmpath('C:\Stimulator_master\sync_inputs')
+rmpath('C:\Stimulator_master\onlineAnalysis')
+%rmpath('C:\ISIAnGUI\F1')
+
+%Set paths of new version
+path('C:\Stimulator_master_new\COM_display',path)
+path('C:\Stimulator_master_new\COM_acquisition',path)
+path('C:\Stimulator_master_new\DisplayCode',path)
+path('C:\Stimulator_master_new\GUIs',path)
+path('C:\Stimulator_master_new\sync_inputs',path)
+path('C:\Stimulator_master_new\onlineAnalysis',path)
+%path('C:\ISIAnGUI\F1_new',path)
+
+%Initialize stimulus parameter structures
+configurePstate('PG')
+configureMstate
+configureLstate
+
+%Host-Host communication
+configDisplayCom    %stimulus computer
+
+%NI USB input for ISI acquisition timing from frame grabber
+configSyncInput  
+
+%configEyeShutter
+
+%Open GUIs
+MainWindow
+Looper 
+paramSelect

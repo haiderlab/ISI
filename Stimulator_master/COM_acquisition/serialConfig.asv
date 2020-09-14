@@ -1,0 +1,56 @@
+function out=serialConfig
+
+%Modification of MP285Config, for configuration of serial port connection to ScanImage.	
+
+	global serialstate
+
+	serialstate.port='COM3';  
+
+% close all open serial port objects on the same port and remove
+% the relevant object form the workspace
+	port=instrfind('Port',serialstate.port);
+	if length(port) > 0; 
+		fclose(port); 
+		delete(port);
+		clear port;
+	end
+
+% make serial object
+	serialstate.serialPortHandle = serial(serialstate.port);
+%	set(serialstate.serialPortHandle, 'BaudRate', serialstate.baud, 'Parity', 'none' , 'Terminator', 'CR', ...
+%		'StopBits', 1, 'Timeout', serialstate.timeout, 'Name', 'Stim');
+
+%Establish serial port event callback criterion
+serialstate.serialPortHandle.BytesAvailableFcnMode = 'Terminator';
+serialstate.serialPortHandle.Terminator = 99; %Magic number to identify request from ScanImage
+
+% open and check status 
+	fopen(serialstate.serialPortHandle);
+	stat=get(serialstate.serialPortHandle, 'Status');
+	if ~strcmp(stat, 'open')
+		disp([' serialConfig: trouble opening port; cannot proceed']);
+		serialstate.serialPortHandle=[];
+		out=1;
+		return;
+	end
+    
+serialstate.serialPortHandle.bytesavailablefcn = @ScanImageAlert;  
+
+fwrite(serialstate.serialPortHandle, [13])
+
+fprintf(serialstate.serialPortHandle,['flush' 'c'])
+%serialTalk('Hello');
+
+%%%I don't know why this is necessary, but otherwise extaneous things get
+%%%sent
+fclose(serialstate.serialPortHandle);
+delete(serialstate.serialPortHandle);
+clear serialstate.serialPortHandle;
+
+global serialstate
+serialstate.port='COM3';
+serialstate.serialPortHandle = serial(serialstate.port);
+fopen(serialstate.serialPortHandle)
+%%%%%%%%%%%%%%%%%%
+
+out=0;

@@ -1,0 +1,20 @@
+function waitforACQ
+
+%This waits for the acquisition computer to finish acquiring and writing to disc
+
+n = get(ACQserial.serialPortHandle,'BytesAvailable');
+while n == 0
+    n = get(ACQserial.serialPortHandle,'BytesAvailable'); %Wait for response
+end
+pause(.5) %wait to collect the rest of the string
+
+n = get(ACQserial.serialPortHandle,'BytesAvailable');
+Resp = fread(ACQserial.serialPortHandle,n);
+Resp = char(Resp)';
+
+if strcmp(Resp(1:2),'DW')
+    sprintf('Done writing data. Next trial.')
+else
+    sprintf('Warning... No "done saving" response from Scanimage')
+end
+

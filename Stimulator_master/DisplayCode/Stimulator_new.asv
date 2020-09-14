@@ -1,0 +1,18 @@
+function Stimulator_new
+
+rmpath('C:\Stimulator_master\DisplayCode')
+
+%Initialize stimulus parameter structures
+configurePstate('PG')
+configureMstate
+configureLstate
+
+%Host-Host communication
+configDisplayCom    %stimulus computer
+
+%configEyeShutter
+
+%Open GUIs
+MainWindow
+Looper 
+paramSelect

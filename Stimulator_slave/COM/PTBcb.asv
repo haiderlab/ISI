@@ -1,0 +1,31 @@
+function Stimulus_callback(obj,event)
+%Callback function from Stimulus PC
+
+global gh comState screenPTR
+
+n=get(comState.serialPortHandle,'BytesAvailable');
+if n > 0
+    inString = fread(comState.serialPortHandle,n);
+    inString = char(inString');
+else
+    return
+end
+
+inString = inString(1:end-1);  %Get rid of the terminator
+inString
+
+id = find(inString == ';')
+
+msgID = inString(2:id(2)-1);
+
+
+
+
+updateLstate
+updateMstate
+run
+
+%playgrating
+
+% Screen(screenPTR, 'FillRect', 200);
+% Screen(screenPTR, 'Flip');

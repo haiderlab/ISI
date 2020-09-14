@@ -1,0 +1,7 @@
+function ttag = gettimetag(c,r)
+
+for c = 1:nc
+    for r = 1:nr
+        ttag(c,r) = looperInfo.conds{c}.repeats{r}.timetag;
+    end
+end

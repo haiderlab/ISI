@@ -1,0 +1,40 @@
+function prepACQ
+
+%Prep Scanimage... tell it trial time and hit the loop button
+
+global ACQserial
+
+n = get(ACQserial.serialPortHandle,'BytesAvailable');
+if n > 0
+    fread(ACQserial.serialPortHandle,n); %clear the buffer
+end
+
+total_time = getParamVal('stim_time');
+predelay = getParamVal('predelay');
+postdelay = getParamVal('postdelay');
+
+%Send trial length values
+fwrite(ACQserial.serialPortHandle,['StimTimeInfo=' 13 ...
+    num2str(total_time) 13 ...
+    num2str(predelay) 13 ...
+    num2str(postdelay) '!']);
+
+
+%Wait for response
+while n == 0
+    n = get(ACQserial.serialPortHandle,'BytesAvailable');
+end
+pause(1) %Wait to get rest of string
+n = get(ACQserial.serialPortHandle,'BytesAvailable');
+fread(ACQserial.serialPortHandle,n); %clear the buffer
+
+
+%Tell ScanImage to hit Loop button and then wait for response:
+fwrite(ACQserial.serialPortHandle,['loop' '!']); %Tell ScanImage to start 'loop' button
+while n == 0
+    n = get(ACQserial.serialPortHandle,'BytesAvailable'); %Wait for response
+end
+pause(1) %Wait to get rest of string
+n = get(ACQserial.serialPortHandle,'BytesAvailable');
+fread(ACQserial.serialPortHandle,n); %clear the buffer
+

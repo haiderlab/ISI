@@ -1,0 +1,23 @@
+function waitforSerialResp   
+
+global DcomState 
+
+comhandle = DcomState.serialPortHandle;
+
+n = get(comhandle,'BytesAvailable');
+if n > 0
+    fread(comhandle,n); %clear the buffer
+end
+counter = 0;
+while n == 0
+    n = get(comhandle,'BytesAvailable'); %Wait for response
+   counter = counter+1;
+end
+
+pause(.5) %Hack to finish the read
+
+n = get(comhandle,'BytesAvailable');
+if n > 0
+    fread(comhandle,n); %clear the buffer
+end
+

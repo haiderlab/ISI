@@ -1,0 +1,25 @@
+function runSample
+
+global DcomState GUIhandles
+
+modID = get(GUIhandles.param.module,'value');
+switch modID
+    case 1
+        mod = 'GT';
+    case 2
+        mod = 'RD';
+    case 3
+        mod = 'FN';
+    case 4
+        mod = 'MP';
+end
+
+msg = ['S;' mod ';~'];
+
+sendPinfo  %Send long parameter string
+waitforDisplayResp
+
+sendMinfo  %Send info from 'main'
+waitforSerialResp
+
+fwrite(DcomState.serialPortHandle,msg);  %Tell it to play

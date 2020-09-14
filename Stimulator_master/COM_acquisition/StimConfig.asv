@@ -1,0 +1,41 @@
+function out=StimConfig
+
+%Modification of MP285Config, for configuration of serial port connection to visual stimulus PC (pep) 	
+
+	global state
+
+	state.stim.port='COM4';
+
+% close all open serial port objects on the same port and remove
+% the relevant object form the workspace
+	port=instrfind('Port',state.stim.port);
+	if length(port) > 0; 
+		fclose(port); 
+		delete(port);
+		clear port;
+	end
+
+% make serial object named 'stim'
+	state.stim.serialPortHandle = serial(state.stim.port);
+%	set(state.stim.serialPortHandle, 'BaudRate', state.stim.baud, 'Parity', 'none' , 'Terminator', 'CR', ...
+%		'StopBits', 1, 'Timeout', state.stim.timeout, 'Name', 'Stim');
+
+state.stim.serialPortHandle.BytesAvailableFcnCount = 1;
+state.stim.serialPortHandle.BytesAvailableFcnMode = 'byte';
+
+% open and check status 
+	fopen(state.stim.serialPortHandle);
+	stat=get(state.stim.serialPortHandle, 'Status');
+	if ~strcmp(stat, 'open')
+		disp([' StimConfig: trouble opening port; cannot to proceed']);
+		state.stim.serialPortHandle=[];
+		out=1;
+		return;
+	end
+    
+state.stim.serialPortHandle.bytesavailablefcn = @StimAlert;  
+
+StimulusTalk(state.motor.AbsORRel)
+
+out=0;
+
