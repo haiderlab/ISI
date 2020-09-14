@@ -10,7 +10,6 @@ inputM.mouseID = 'Mouse_12_M200707_1';
 inputM.date = '08_25';
 inputM.analyzerRoot = '\\neuro-cloud\labs\haider\Data\ISI\Animal_Testing';
 inputM.ses = '4';
-
 %inputM.ses = num2str(str2num(inputM.ses) + 1)
 
 slaveIP = '143.215.230.184'; % slaveIP of surgery room
