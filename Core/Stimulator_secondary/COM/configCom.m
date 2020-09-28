@@ -1,4 +1,4 @@
-function configCom(masterIP)
+function configCom(primaryIP)
 
 global comState
 
@@ -6,7 +6,7 @@ global comState
 
 %comState is not initialized in the .ini file, nor is it saved in the state.headerString
 
-rip = masterIP;
+rip = primaryIP;
 
 % close all open serial port objects on the same port and remove
 % the relevant object from the workspace
@@ -45,5 +45,5 @@ if ~strcmp(stat, 'open')
     return;
 end
 
-comState.serialPortHandle.bytesavailablefcn = @Mastercb;  
+comState.serialPortHandle.bytesavailablefcn = @Primarycb;  
 

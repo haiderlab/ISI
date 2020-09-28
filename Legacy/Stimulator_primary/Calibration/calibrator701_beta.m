@@ -1,7 +1,7 @@
 
 global DcomState
 
-root = 'C:\Stimulator_master\Calibration\';
+root = 'C:\Stimulator_primary\Calibration\';
 
 port = instrfindall;
 if length(port) > 0; 
@@ -12,20 +12,23 @@ end
 
 configDisplayCom    %stimulus computer
 
-PR650 = serial('COM6','BaudRate',9600,'InputBufferSize',4096);
-fopen(PR650)
+PR701 = serial('COM6','BaudRate',9600,'DataBits',8,'Parity','none','StopBits',1,'FlowControl','hardware','InputBufferSize',4096);
+fopen(PR701)
+
+fprintf(PR701,['PR701'])   %initiate Remote control
+pause(3)
 
 %% This needs to be executed immediately after the 650 is turned on
 
 %fprintf(PR650,'S1,,,,,0,1,1') %adaptive
 %I decided that I don't like the adaptive because it doesn't give me
 %anything for the low values
-fprintf(PR650,'S1,,,,,1000,1,1') %set integration time (ms)
+fprintf(PR701,'S,,,,,3000,0,1,0,0,0')  %set integration time (ms)
 pause(2)
 
-n = get(PR650,'BytesAvailable');
+n = get(PR701,'BytesAvailable');
 if n > 0
-    bout = fread(PR650,n); 
+    bout = fread(PR701,n); 
 end  %
 sprintf('%c',bout)
 
@@ -33,15 +36,16 @@ sprintf('%c',bout)
 %% Execute this cell to get the luminance measurements
 
 %clear the input buffer
-n = get(PR650,'BytesAvailable');
+n = get(PR701,'BytesAvailable');
 if n > 0
-    bout = fread(PR650,n); 
+    bout = fread(PR701,n); 
 else
     bout = '';
 end 
 sprintf('%c',bout)
 
-dom =0:1:255;
+dom =0:20:255;
+dom = 128
 clear Y x y
 fid = fopen([root 'luminance'],'w');
 for i=1:3
@@ -49,6 +53,7 @@ for i=1:3
         
         j = dom(k);
         RGB = '000000000';
+        RGB = '128128128';
         RGB(3*(i-1)+1:i*3) = sprintf('%03s',num2str(j))
 
         fwrite(DcomState.serialPortHandle,['Q;RGB;' RGB ';~']); %Give display command
@@ -57,23 +62,23 @@ for i=1:3
         sprintf('Measuring Gun #%d = %d\n',i,j)
 
         %Make sure buffer is clear before write command
-        n = get(PR650,'BytesAvailable');
+        n = get(PR701,'BytesAvailable');
         if n > 0
-            fread(PR650,n);
+            fread(PR701,n);
         end
 
         %Make measurement
-        fprintf(PR650,['M1' 13]);
+        fprintf(PR701,['M1' 13]);
 
         %Wait for response
         n = 0;
         while n == 0
-            n = get(PR650,'BytesAvailable');
+            n = get(PR701,'BytesAvailable');
         end
         pause(4) %let it get the rest of the string
-        n = get(PR650,'BytesAvailable');
+        n = get(PR701,'BytesAvailable');
         
-        bout = fread(PR650,n);
+        bout = fread(PR701,n);
         
         data = sprintf('%c',bout)
         delims = find(data == ',');
@@ -91,7 +96,7 @@ for i=1:3
 
     end
 end
-%save([root 'CIEvalues.mat'],'x','y','Y','Err','dom')
+save([root 'CIEvalues.mat'],'x','y','Y','Err','dom')
 %close display
 fwrite(DcomState.serialPortHandle,'C;~')
 
@@ -102,32 +107,32 @@ fwrite(DcomState.serialPortHandle,'C;~')
 
 %%
 
-fprintf(PR650,'S1,,,,,0,1,1')
-n = get(PR650,'BytesAvailable');
+fprintf(PR701,'S,,,,,3000,0,1,0,0,0')
+n = get(PR701,'BytesAvailable');
 if n > 0
-    bout = fread(PR650,n); 
+    bout = fread(PR701,n); 
 end %clear buffer
 pause(1)
 
 %%
-fwrite(DcomState.serialPortHandle,['Q;RGB;128000000;~']); %Give display command
+fwrite(DcomState.serialPortHandle,['Q;RGB;240000000;~']); %Give display command
 waitforDisplayResp
 
 nreps = 3;
 clear dom Iall
 for rep = 1:nreps
-    fwrite(PR650, ['M5' 13]);
+    fwrite(PR701, ['M5' 13]);
     pause(2)
 
     n = 0;
     while n == 0
-        n = get(PR650,'BytesAvailable');
+        n = get(PR701,'BytesAvailable');
     end
     pause(10) %let it get the rest of the string
 
-    n = get(PR650,'BytesAvailable');
+    n = get(PR701,'BytesAvailable');
     if n > 0
-        bout = fread(PR650,n);
+        bout = fread(PR701,n);
     end
 
     %Convert bout into usable Matlab variable
@@ -150,29 +155,29 @@ end
 
 I = mean(Iall');
 
-save([root 'spectrum_red.mat'],'I','dom')
-%fwrite(DcomState.serialPortHandle,'C;~')
+save([root 'spectrum_red240.mat'],'I','dom')
+fwrite(DcomState.serialPortHandle,'C;~')
 
 %%
 
-fwrite(DcomState.serialPortHandle,['Q;RGB;000128000;~']); %Give display command
+fwrite(DcomState.serialPortHandle,['Q;RGB;000240000;~']); %Give display command
 waitforDisplayResp
 
 nreps = 3;
 clear dom Iall
 for rep = 1:nreps
-    fwrite(PR650, ['M5' 13]);
+    fwrite(PR701, ['M5' 13]);
     pause(2)
 
     n = 0;
     while n == 0
-        n = get(PR650,'BytesAvailable');
+        n = get(PR701,'BytesAvailable');
     end
     pause(10) %let it get the rest of the string
 
-    n = get(PR650,'BytesAvailable');
+    n = get(PR701,'BytesAvailable');
     if n > 0
-        bout = fread(PR650,n);
+        bout = fread(PR701,n);
     end
 
     %Convert bout into usable Matlab variable
@@ -194,30 +199,29 @@ for rep = 1:nreps
 end
 
 I = mean(Iall');
-
-save([root 'spectrum_green.mat'],'I','dom')
-%fwrite(DcomState.serialPortHandle,'C;~')
+save([root 'spectrum_green240.mat'],'I','dom')
+fwrite(DcomState.serialPortHandle,'C;~')
 
 %%
 
-fwrite(DcomState.serialPortHandle,['Q;RGB;000000128;~']); %Give display command
+fwrite(DcomState.serialPortHandle,['Q;RGB;000000240;~']); %Give display command
 waitforDisplayResp
 
-nreps = 3;
+nreps = 10;
 clear dom Iall
 for rep = 1:nreps
-    fwrite(PR650, ['M5' 13]);
+    fwrite(PR701, ['M5' 13]);
     pause(2)
 
     n = 0;
     while n == 0
-        n = get(PR650,'BytesAvailable');
+        n = get(PR701,'BytesAvailable');
     end
     pause(10) %let it get the rest of the string
 
-    n = get(PR650,'BytesAvailable');
+    n = get(PR701,'BytesAvailable');
     if n > 0
-        bout = fread(PR650,n);
+        bout = fread(PR701,n);
     end
 
     %Convert bout into usable Matlab variable
@@ -240,7 +244,7 @@ end
 
 I = mean(Iall');
 
-save([root 'spectrum_blue.mat'],'I','dom')
+save([root 'spectrum_blue240.mat'],'I','dom')
 fwrite(DcomState.serialPortHandle,'C;~')
 
 %%

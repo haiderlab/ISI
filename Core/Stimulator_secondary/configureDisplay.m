@@ -1,4 +1,4 @@
-function configureDisplay(masterIP)
+function configureDisplay(primaryIP)
 
 close all
 
@@ -12,7 +12,7 @@ Priority(1);  %Make sure priority is set to "real-time"
 configurePstate('PG') %Use grater as the default when opening
 configureMstate
 
-configCom(masterIP);
+configCom(primaryIP);
 
 configSync;
 

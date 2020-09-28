@@ -31,7 +31,7 @@ if ~strcmp(stat, 'open')
     return;
 end
 
-%Establish serial port event callback criterion (Master doesn't use callbacks, it waits)
+%Establish serial port event callback criterion (Primary doesn't use callbacks, it waits)
 % ACQserial.serialPortHandle.BytesAvailableFcnMode = 'Terminator';
 % ACQserial.serialPortHandle.Terminator = 99; %Magic number to identify request from Stimulus ('c' as a string)
 % ACQserial.serialPortHandle.bytesavailablefcn = @ScanImageAlert;  

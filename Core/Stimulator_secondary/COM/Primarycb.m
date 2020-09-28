@@ -1,4 +1,4 @@
-function Mastercb(obj,event)
+function Primarycb(obj,event)
 %Callback function 'Stimulator' PC
 
 global comState screenPTR loopTrial
@@ -18,7 +18,7 @@ try
     
     
     delims = find(inString == ';');
-    msgID = inString(1:delims(1)-1);  %Tells what button was pressed at master
+    msgID = inString(1:delims(1)-1);  %Tells what button was pressed at primary
     if strcmp(msgID,'M') || strcmp(msgID,'C') || strcmp(msgID,'S')
         paramstring = inString(delims(1):end); %list of parameters and their values
     elseif strcmp(msgID,'B')        
@@ -103,7 +103,7 @@ try
             %close all
             Priority(0);         
             
-        case 'Q'  %Used by calibration.m at the Master (not part of 'Stimulator')
+        case 'Q'  %Used by calibration.m at the Primary (not part of 'Stimulator')
             
             paramstring = paramstring(2:end);            
             RGB = [str2num(paramstring(1:3)) str2num(paramstring(4:6)) str2num(paramstring(7:9))];
@@ -121,7 +121,7 @@ try
     
     
     if ~strcmp(msgID,'G')
-        fwrite(comState.serialPortHandle,'a')  %dummy so that Master knows it finished
+        fwrite(comState.serialPortHandle,'a')  %dummy so that Primary knows it finished
     end
     
 
@@ -136,6 +136,6 @@ catch
     msg.stack.file
     msg.stack.line
     
-    fwrite(comState.serialPortHandle,'a')  %dummy so that Master knows it finished
+    fwrite(comState.serialPortHandle,'a')  %dummy so that Primary knows it finished
     
 end
