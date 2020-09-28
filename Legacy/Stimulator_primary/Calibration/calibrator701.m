@@ -1,7 +1,7 @@
 
 global DcomState
 
-root = 'C:\Stimulator_master\Calibration\';
+root = 'C:\Stimulator_primary\Calibration\';
 
 port = instrfindall;
 if length(port) > 0; 
