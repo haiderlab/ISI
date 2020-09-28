@@ -1,9 +1,9 @@
-function Stimulator(slaveIP)
+function Stimulator(secondaryIP)
 
 global FrameRate
 %Initialize stimulus parameter structures
 configurePstate('PG')
-configureMstate(slaveIP);
+configureMstate(secondaryIP);
 configureLstate
 
 %Host-Host communication

@@ -1,4 +1,4 @@
-function configureMstate(slaveIP)
+function configureMstate(secondaryIP)
 
 global Mstate
 
@@ -23,5 +23,5 @@ Mstate.analyzerRoot = 'C:\neurodata\AnalyzerFiles_new';
 %Mstate.analyzerRoot = 'Y:\haider\Data\ISI\Animal_Testing';
 
 %Mstate.stimulusIDP = '143.215.230.184';  %Neighbor (ISI computer)
-Mstate.stimulusIDP = slaveIP; %ip address of slave at dev rig;
+Mstate.stimulusIDP = secondaryIP; %ip address of secondary at dev rig;
 

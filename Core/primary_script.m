@@ -1,5 +1,5 @@
-%% Run this on Master computer
-addpath(genpath('Stimulator_master'))
+%% Run this on Primary computer
+addpath(genpath('Stimulator_primary'))
 addpath(genpath('More'))
 addpath(genpath('New_Imager'))
 addpath(genpath('General_Testing_Material'))
@@ -12,7 +12,7 @@ inputM.analyzerRoot = '\\neuro-cloud\labs\haider\Data\ISI\Animal_Testing';
 inputM.ses = '4';
 %inputM.ses = num2str(str2num(inputM.ses) + 1)
 
-slaveIP = '143.215.230.184'; % slaveIP of surgery room
+secondaryIP = '143.215.230.184'; % secondaryIP of surgery room
 
 global lightval
 lightval = 'INT0=4000';
@@ -23,4 +23,4 @@ imagerGUI = Imager;
 waitfor(imagerGUI);
 
 %%
-Stimulator(slaveIP);
+Stimulator(secondaryIP);
