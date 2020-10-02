@@ -2,6 +2,23 @@ function [moved, fixed, combined] = imalign(moving, fixed)
 % Aligns a moving image to a fixed image and returns the aligned images as
 % well as a combined image (one overlaid on the other). Enables the user to
 % crop the aligned images. Images are also written as JPG files.
+% 
+% Usage steps:
+% 1. Call the function with two images: moving (the image to move to align
+% with the fixed image) and fixed (the image that will stay in the same
+% position).
+% 2. Select control points (points on the images that correspond to each
+% other and will be used for alignment) by alternating between clicking on
+% the fixed and moving images so that corresponding points have the same
+% number. Exit out of the control point selection tool when finished.
+% 3. Optional: choose whether or not to show the selected control points as
+% red dots on the output images.
+% 4. Optional: crop the image by clicking and dragging to select the
+% cropping region. Then right click and select "Crop Image".
+% 5. Optional: add yellow circles to the image by dragging and resizing
+% them into the correct position. Double click the circle once it is
+% positioned correctly. You will then be prompted if you'd like to add more
+% circles.
 
     %% Convert to grayscale if necessary
     [~, ~, numberOfColorChannels] = size(fixed);
@@ -79,6 +96,27 @@ function [moved, fixed, combined] = imalign(moving, fixed)
             movedWithCircle = insertShape(moved, shape, position);
             fixedWithCircle = insertShape(fixed, shape, position);
             
+            % Ask if add another circle
+            shouldAddAnotherCircle = questdlg({'Would you like to add another circle to the images?', 'If yes, position the circle and double click to confirm position.'},'Add Circle Prompt','No','Yes','No');
+            while strcmp('Yes',shouldAddAnotherCircle)
+                imshow(combinedWithCircle);
+                [ny,nx,~] = size(combined);
+                combinedCenter = round([nx ny]/2);
+                radius = round(min([nx ny])/6);
+                hROI = drawcircle('Center',combinedCenter,'Radius',radius,'Color','y');
+                try
+                    position = customWait(hROI);
+                    shape = 'FilledCircle';
+                    combinedWithCircle = insertShape(combinedWithCircle, shape, position);
+                    movedWithCircle = insertShape(movedWithCircle, shape, position);
+                    fixedWithCircle = insertShape(fixedWithCircle, shape, position);
+                catch
+                    uiwait(msgbox('An error occurred - circle deleted'));
+                end
+                shouldAddAnotherCircle = questdlg({'Would you like to add another circle to the images?', 'If yes, position the circle and double click to confirm position.'},'Add Circle Prompt','No','Yes','No');
+            end
+            
+            % Write JPG images
             if strcmp(optionYesNew,shouldAddCircle)
                 imwrite(movedWithCircle, 'align_moved_circle.jpg');
                 imwrite(fixedWithCircle, 'align_fixed_circle.jpg');
