@@ -72,21 +72,26 @@ switch(cmd(1))
         analogIN.startBackground();
         
         %% managing camera
+        useNewCameraInterface = false;
         timevecReal = [];
         timeSt = [];
         pause('on');
         c2 = clock;
         timeSt = [timeSt (c2(4)*3600 + c2(5)*60 + c2(6)) *1000];
-        for i = 1:j %Capture images from feed
-            % Recording frame time stamps
-            c2 = clock;
-            timevecReal = [timevecReal (c2(4)*3600 + c2(5)*60 + c2(6)) *1000];
-            % Record & save snaps
-            frame = snapshot(handles.m);
-            I = imcrop(frame,handles.ROI);
-            %I = cropDim;
-            ims = [ims {I}];
-            pause((1/FPS)- 0.035)
+        if useNewCameraInterface
+            [ims, timevecReal] = grabFrames(j, FPS, 'C:/Users/haider-lab/Downloads/frames/');
+        else
+            for i = 1:j %Capture images from feed
+                % Recording frame time stamps
+                c2 = clock;
+                timevecReal = [timevecReal (c2(4)*3600 + c2(5)*60 + c2(6)) *1000];
+                % Record & save snaps
+                frame = snapshot(handles.m);
+                I = imcrop(frame,handles.ROI);
+                %I = cropDim;
+                ims = [ims {I}];
+                pause((1/FPS)- 0.035)
+            end
         end
         c2 = clock;
         timeSt = [timeSt (c2(4)*3600 + c2(5)*60 + c2(6)) *1000];
