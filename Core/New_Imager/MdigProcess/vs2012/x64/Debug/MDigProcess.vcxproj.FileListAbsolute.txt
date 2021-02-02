@@ -1,0 +1,2 @@
+Y:\haider\Code\ISI\General_processing\ISIcode_SheaWells\MdigProcess\vs2012\x64\Debug\MDigProcess.exe
+Y:\haider\Code\ISI\General_processing\ISIcode_SheaWells\MdigProcess\vs2012\x64\Debug\MDigProcess.pdb

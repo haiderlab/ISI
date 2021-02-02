@@ -1,7 +1,7 @@
 /***************************************************************************************/
 /*
  * File name: MdigProcess.cpp
- * Last modified: 12/01/2020 - Shea Wells
+ * Last modified: 02/02/2021 - Shea Wells
  *
  * Synopsis:  This program shows the use of the MdigProcess() function and its multiple
  *            buffering acquisition to do robust real-time processing.
@@ -67,8 +67,9 @@ int MosMain(int argc, char *argv[])
 
    // User inputs
    MIL_INT NumberOfFrames = 20; //set to 20 by default
-   MIL_DOUBLE AcquisitionFrameRateFps = 0; //set as 0 by default
+   MIL_DOUBLE AcquisitionFrameRateFps = 0; //set as 0 by default - indicates using existing camera frame rate setting
    std::string fileDirectory = "C:/Users/haider-lab/Downloads/frames/";
+   bool enableCLProtocol = false; //enables setting and retrieving camera frame rate property via CL protocol
 
    // Retrieve command line arguments
    switch (argc)
@@ -112,23 +113,29 @@ int MosMain(int argc, char *argv[])
    MappControl(M_DEFAULT, M_ERROR, M_PRINT_ENABLE);
 
    /* Free buffers to leave space for possible temporary buffers. */
-   for (n=0; n<2 && MilGrabBufferListSize; n++)
+   /*for (n=0; n<2 && MilGrabBufferListSize; n++)
       {
       MilGrabBufferListSize--;
       MbufFree(MilGrabBufferList[MilGrabBufferListSize]);
-      }
+      }*/
 
    // Enable CLProtocol
-   MdigControl(MilDigitizer, M_GC_CLPROTOCOL_DEVICE_ID, M_PTR_TO_DOUBLE(MIL_TEXT("M_DEFAULT")));
-   MdigControl(MilDigitizer, M_GC_CLPROTOCOL, M_ENABLE);
+   if (enableCLProtocol)
+   {
+       MdigControl(MilDigitizer, M_GC_CLPROTOCOL_DEVICE_ID, M_PTR_TO_DOUBLE(MIL_TEXT("M_DEFAULT")));
+       MdigControl(MilDigitizer, M_GC_CLPROTOCOL, M_ENABLE);
+   }
 
    // Check frame rate
    MIL_DOUBLE CheckFrameRateFps = 0;
-   MdigInquireFeature(MilDigitizer, M_FEATURE_VALUE, MIL_TEXT("AcquisitionFrameRate"), M_TYPE_DOUBLE, &CheckFrameRateFps);
-   MosPrintf(MIL_TEXT("\nInquired frame rate feature = %.1f frames/sec.\n"), CheckFrameRateFps);
-
+   if (enableCLProtocol)
+   {
+       MdigInquireFeature(MilDigitizer, M_FEATURE_VALUE, MIL_TEXT("AcquisitionFrameRate"), M_TYPE_DOUBLE, &CheckFrameRateFps);
+       MosPrintf(MIL_TEXT("\nInquired frame rate feature = %.1f frames/sec.\n"), CheckFrameRateFps);
+   }
+   
    // Set frame rate if necessary
-   if (AcquisitionFrameRateFps > 0 && AcquisitionFrameRateFps != CheckFrameRateFps) // check if set by user to new value that is different than prior value
+   if (enableCLProtocol && AcquisitionFrameRateFps > 0 && AcquisitionFrameRateFps != CheckFrameRateFps) // check if set by user to new value that is different than prior value
    {
 	   MdigControlFeature(MilDigitizer, M_FEATURE_VALUE, MIL_TEXT("AcquisitionFrameRate"), M_TYPE_DOUBLE, &AcquisitionFrameRateFps);
 	   MosPrintf(MIL_TEXT("\nFrame rate = %.1f frames/sec.\n"), AcquisitionFrameRateFps);
@@ -202,9 +209,13 @@ int MosMain(int argc, char *argv[])
                         (int)ProcessFrameCount, ProcessFrameRate, 1000.0/ProcessFrameRate);
 
    // Check frame rate
-   CheckFrameRateFps = 0;
-   MdigInquireFeature(MilDigitizer, M_FEATURE_VALUE, MIL_TEXT("AcquisitionFrameRate"), M_TYPE_DOUBLE, &CheckFrameRateFps);
-   MosPrintf(MIL_TEXT("\nInquired frame rate feature = %.1f frames/sec.\n"), CheckFrameRateFps);
+   if (enableCLProtocol)
+   {
+       CheckFrameRateFps = 0;
+       MdigInquireFeature(MilDigitizer, M_FEATURE_VALUE, MIL_TEXT("AcquisitionFrameRate"), M_TYPE_DOUBLE, &CheckFrameRateFps);
+       MosPrintf(MIL_TEXT("\nInquired frame rate feature = %.1f frames/sec.\n"), CheckFrameRateFps);
+   }
+   
 
    /* Free the grab buffers. */
    while(MilGrabBufferListSize > 0)
@@ -266,17 +277,19 @@ MIL_INT MFTYPE ProcessingFunction(MIL_INT HookType, MIL_ID HookId, void* HookDat
    /* Execute the processing and update the display. */
    //MimArith(ModifiedBufferId, M_NULL, UserHookDataPtr->MilImageDisp, M_NOT);
    
+   /*
    #if M_MIL_USE_CE
-   /* Give execution time to the user interface when the digitizer processing 
-      queue is full. If necessary, the Sleep value can be increased to give more 
-      execution time to the user interface.
-   */
+   // Give execution time to the user interface when the digitizer processing 
+   //  queue is full. If necessary, the Sleep value can be increased to give more 
+   //  execution time to the user interface.
+   
    if(MdigInquire(UserHookDataPtr->MilDigitizer, M_PROCESS_PENDING_GRAB_NUM, M_NULL) <= 1)
       {
       if ((UserHookDataPtr->ProcessedImageCount%10) == 0)
          Sleep(2);
       }
    #endif
+   */
 
    return 0;
    }
