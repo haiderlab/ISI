@@ -14,7 +14,7 @@ daq.reset;
 analogIN = daq.createSession('mcc');
 addAnalogInputChannel(analogIN,'Board0',0,'Voltage');
 %lh = analogIN.addlistener('DataAvailable', @plotData);
-analogIN.Rate = FrameRate*1000;
+analogIN.Rate = 10000; %previously: FrameRate*1000;
 analogIN.IsContinuous = true;
 %analogIN.startBackground();
 

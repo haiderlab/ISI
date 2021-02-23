@@ -1,4 +1,4 @@
-function [ims, timevec] = grabFrames(numberOfFrames, frameRateFps, frameOutputDirectory)
+function [ims, timevec] = grabFrames(numberOfFrames, frameRateFps, frameOutputDirectory, ROI)
 % grabFrames grabs frames from camera as raw images
 % [ims, timevec] = grabFrames(numberOfFrames, frameRateFps) returns cell 
 % array of rawimages and time vector of file creation times in milliseconds
@@ -58,6 +58,8 @@ end
 %% Wait for process to finish
 if importAfterAllFramesGrabbed
     display('waiting for process to finish - checking for last file')
+    stimTime = numberOfFrames * (1 / frameRateFps);
+    pause(stimTime + 3) %previously used stimTime = getParamVal('stim_time')
     %lastFileName = sprintf('%s%d.raw', frameOutputDirectory, numberOfFrames);
     lastFileName = sprintf('%sREPORT.txt', frameOutputDirectory);
     
@@ -140,7 +142,7 @@ for i = 1:numberOfFrames
     % Get file modification time
     d = System.IO.File.GetLastWriteTime(imageFileName); % was GetCreationTime
     dMilliseconds = (d.Hour*3600 + d.Minute*60 + d.Second) * 1000;
-    timevec = [timevec dMilliseconds];
+    timevec = [timevec double(dMilliseconds)];
     creationDateTime = datetime(d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second);
     if ~useOldFiles && creationDateTime < startTime
         msg = sprintf('WARNING: OLD FILE IMPORTED - %s%d.raw', frameOutputDirectory, i);
@@ -150,7 +152,8 @@ for i = 1:numberOfFrames
     %pause(0.01)
     I = fread(fin, size, precision); 
     Z = reshape(I, rows, cols);
-    ims = [ims {Z}];
+    Z_crop = imcrop(Z,ROI);
+    ims = [ims {Z_crop}];
     fclose(fin);
 end
 display('done with frame import')
