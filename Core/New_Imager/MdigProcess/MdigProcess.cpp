@@ -1,19 +1,24 @@
 /***************************************************************************************/
 /*
  * File name: MdigProcess.cpp
- * Last modified: 02/02/2021 - Shea Wells
+ * Last modified: 03/02/2021
  *
- * Synopsis:  This program shows the use of the MdigProcess() function and its multiple
- *            buffering acquisition to do robust real-time processing.
+ * Synopsis:  This program uses the MdigProcess() function and its multiple
+ *            buffering acquisition to do robust real-time processing to gather frames.
  *
  *            The user's processing code to execute is located in a callback function 
  *            that will be called for each frame acquired (see ProcessingFunction()).
+ * 
+ *            This code is based on the MdigProcess example code provided by Matrox.
  *
  *      Note: The average processing time must be shorter than the grab time or some
  *            frames will be missed. Also, if the processing results are not displayed
  *            and the frame count is not drawn or printed, the CPU usage is reduced 
  *            significantly.
  *
+ * MIL-Lite is licensed for both application development and deployment in the presence
+ * of Matrox Imaging hardware or a supplemental license.
+ * 
  * Copyright © Matrox Electronic Systems Ltd., 1992-2015.
  * All Rights Reserved
  */
@@ -28,12 +33,7 @@
 /* Number of images in the buffering grab queue.
    Generally, increasing this number gives a better real-time grab.
  */
-#define BUFFERING_SIZE_MAX 22 //originally 22
-
-// Save exported frames in this directory (must already exist)
-//std::string fileDirectory = "C:/Users/haider-lab/Downloads/frames/";
-//#define MY_FRAME_RATE 20 //frames per second
-//#define MY_NUMBER_OF_FRAMES 40
+#define BUFFERING_SIZE_MAX 22
 
 /* User's processing function prototype. */
 MIL_INT MFTYPE ProcessingFunction(MIL_INT HookType, MIL_ID HookId, void* HookDataPtr);
@@ -94,7 +94,7 @@ int MosMain(int argc, char *argv[])
    /* Allocate defaults. */
    MappAllocDefault(M_DEFAULT, &MilApplication, &MilSystem, &MilDisplay,
                                                 &MilDigitizer, &MilImageDisp);
-   //MdispControl(MilDisplay, M_WINDOW_SHOW, M_DISABLE); //disable showing the display window
+   MdispControl(MilDisplay, M_WINDOW_SHOW, M_DISABLE); //disable showing the display window
 
    /* Allocate the grab buffers and clear them. */
    MappControl(M_DEFAULT, M_ERROR, M_PRINT_DISABLE);
@@ -148,8 +148,7 @@ int MosMain(int argc, char *argv[])
            MdigControl(MilDigitizer, M_GC_FEATURE_BROWSER, M_OPEN + M_ASYNCHRONOUS);
 
            // Wait for user
-           MosPrintf(MIL_TEXT("\nPlease press enter on the frame rate within the feature browser to ensure it updates.\r"));
-           MosPrintf(MIL_TEXT("Press <Enter> to start processing.\r"));
+           MosPrintf(MIL_TEXT("\nPlease press <Enter> on the frame rate within the feature browser to ensure it updates (e.g. Teledyne/Sensor Controls/Frame Rate).\nAfterwards, close the window and press <Enter> to start processing.\r"));
            MosGetch();
        }
 
