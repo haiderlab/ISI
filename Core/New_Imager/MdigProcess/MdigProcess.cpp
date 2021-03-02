@@ -69,7 +69,8 @@ int MosMain(int argc, char *argv[])
    MIL_INT NumberOfFrames = 20; //set to 20 by default
    MIL_DOUBLE AcquisitionFrameRateFps = 0; //set as 0 by default - indicates using existing camera frame rate setting
    std::string fileDirectory = "C:/Users/haider-lab/Downloads/frames/";
-   bool enableCLProtocol = false; //enables setting and retrieving camera frame rate property via CL protocol
+   bool enableCLProtocol = true; //enables setting and retrieving camera frame rate property via CL protocol
+   bool openFeatureBrowserUponFrameRateChange = true; //open the feature browser to allow user to confirm frame rate
 
    // Retrieve command line arguments
    switch (argc)
@@ -93,6 +94,7 @@ int MosMain(int argc, char *argv[])
    /* Allocate defaults. */
    MappAllocDefault(M_DEFAULT, &MilApplication, &MilSystem, &MilDisplay,
                                                 &MilDigitizer, &MilImageDisp);
+   //MdispControl(MilDisplay, M_WINDOW_SHOW, M_DISABLE); //disable showing the display window
 
    /* Allocate the grab buffers and clear them. */
    MappControl(M_DEFAULT, M_ERROR, M_PRINT_DISABLE);
@@ -135,18 +137,21 @@ int MosMain(int argc, char *argv[])
    }
    
    // Set frame rate if necessary
-   if (enableCLProtocol && AcquisitionFrameRateFps > 0 && AcquisitionFrameRateFps != CheckFrameRateFps) // check if set by user to new value that is different than prior value
+   if (enableCLProtocol && AcquisitionFrameRateFps > 0 && (int) AcquisitionFrameRateFps != (int) CheckFrameRateFps) // check if set by user to new value that is different than prior value (rounded to int)
    {
-	   MdigControlFeature(MilDigitizer, M_FEATURE_VALUE, MIL_TEXT("AcquisitionFrameRate"), M_TYPE_DOUBLE, &AcquisitionFrameRateFps);
-	   MosPrintf(MIL_TEXT("\nFrame rate = %.1f frames/sec.\n"), AcquisitionFrameRateFps);
+       MdigControlFeature(MilDigitizer, M_FEATURE_VALUE, MIL_TEXT("AcquisitionFrameRate"), M_TYPE_DOUBLE, &AcquisitionFrameRateFps);
+       MosPrintf(MIL_TEXT("\nFrame rate = %.1f frames/sec.\n"), AcquisitionFrameRateFps);
 
-	   // Open camera's feature browser
-	   MdigControl(MilDigitizer, M_GC_FEATURE_BROWSER, M_OPEN + M_ASYNCHRONOUS);
+       if (openFeatureBrowserUponFrameRateChange)
+       {
+           // Open camera's feature browser
+           MdigControl(MilDigitizer, M_GC_FEATURE_BROWSER, M_OPEN + M_ASYNCHRONOUS);
 
-	   // Wait for user
-	   MosPrintf(MIL_TEXT("\nPlease press enter on the frame rate within the feature browser to ensure it updates.\r"));
-	   MosPrintf(MIL_TEXT("Press <Enter> to start processing.\r"));
-	   MosGetch();
+           // Wait for user
+           MosPrintf(MIL_TEXT("\nPlease press enter on the frame rate within the feature browser to ensure it updates.\r"));
+           MosPrintf(MIL_TEXT("Press <Enter> to start processing.\r"));
+           MosGetch();
+       }
 
 	   // Check frame rate
 	   CheckFrameRateFps = 0;
@@ -277,7 +282,7 @@ MIL_INT MFTYPE ProcessingFunction(MIL_INT HookType, MIL_ID HookId, void* HookDat
    /* Execute the processing and update the display. */
    //MimArith(ModifiedBufferId, M_NULL, UserHookDataPtr->MilImageDisp, M_NOT);
    
-   /*
+   
    #if M_MIL_USE_CE
    // Give execution time to the user interface when the digitizer processing 
    //  queue is full. If necessary, the Sleep value can be increased to give more 
@@ -289,7 +294,7 @@ MIL_INT MFTYPE ProcessingFunction(MIL_INT HookType, MIL_ID HookId, void* HookDat
          Sleep(2);
       }
    #endif
-   */
+   
 
    return 0;
    }
