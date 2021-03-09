@@ -1,7 +1,7 @@
 %% Testing sendtoImager v3 - Replaces built in sendtoImager
 
 function sendtoImager(cmd)
-global imagerhandles h FPS GUIhandles analyzer dataTT dataTTReal analogIN
+global imagerhandles h FPS GUIhandles analyzer dataTT dataTTReal analogIN cameraInterface
 
 switch(cmd(1))
     case 'A'  %% animal
@@ -61,25 +61,23 @@ switch(cmd(1))
         %recording part
         handles = imagerhandles;
         total_time =  GUIhandles.main.timetxt;
-        %total_time = 10;
-        j = total_time * FPS; %recording Time is in seconds, Frame rate is in FPS
+        j = total_time * FPS; %total number of frames to record
         ims = [];
-        
         
         configSyncInput
         lh = analogIN.addlistener('DataAvailable', @plotData);
         analogIN.startBackground();
         
         %% managing camera
-        useNewCameraInterface = true;
+        %useNewCameraInterface = true;
         timevecReal = [];
         timeSt = [];
         pause('on');
         c2 = clock;
         timeSt = [timeSt (c2(4)*3600 + c2(5)*60 + c2(6)) *1000];
-        if useNewCameraInterface
-            %[ims, timevecReal] = grabFrames(j, FPS, 'C:/Users/haider-lab/Downloads/frames/');
-            [ims, timevecReal] = grabFrames(j, 0, 'C:/Users/haider-lab/Downloads/frames/', handles.ROI);
+        if cameraInterface.useCustom
+            clear handles.m; %close connection to matroxcam
+            [ims, timevecReal] = grabFrames(j, FPS, cameraInterface.frameDimensions, cameraInterface.exePath, cameraInterface.tempStoragePath, handles.ROI);
         else
             for i = 1:j %Capture images from feed
                 % Recording frame time stamps

@@ -1,4 +1,4 @@
-function [ims, timevec] = grabFrames(numberOfFrames, frameRateFps, frameOutputDirectory, ROI)
+function [ims, timevec] = grabFrames(numberOfFrames, frameRateFps, frameDimensions, exePath, frameOutputDirectory, ROI)
 % grabFrames grabs frames from camera as raw images
 % [ims, timevec] = grabFrames(numberOfFrames, frameRateFps) returns cell 
 % array of rawimages and time vector of file creation times in milliseconds
@@ -12,17 +12,27 @@ function [ims, timevec] = grabFrames(numberOfFrames, frameRateFps, frameOutputDi
 % the frame rate for it to be set (this is necessary due to a camera bug).
 % This can be an int or double value.
 %
+% frameDimensions - array [width height] in pixels of output frame.
+%
+% exePath - executable file path to grab the frames. The executable should
+% take numberOfFrames, frameRateFps, and frameOutputDirectory as command
+% line arguments (matching this same order). Frames should be output to the
+% frameOutputDirectory with numeric names starting from 1 with the .raw
+% extension (e.g. 1.raw, 2.raw, etc.). Once grabbing is done, the
+% executable should save a REPORT.txt file to indicate completion. Note
+% that this function uses LastWriteTime as the time stamp for the captured
+% frames, so it is best to output the frames as soon as they are grabbed.
+%
 % frameOutputDirectory - where the frame grabber saves the raw images to
 % the disk. This should be an absolute/full directory path with a trailing 
-% forward slash to avoid any issues.
+% forward slash to avoid any issues. It is only used for temporary storage
+% and does not need to be cleared - grabFrames checks file properties to
+% only use images grabbed after grabFrames was called.
 % (e.g. 'C:/Users/haider-lab/Downloads/frames/')
 %
-% NOTE: if the frame rate is set too high (above 30 fps), the camera will
-% miss frames and not operate correctly. Also, make sure to clear the
-% images when they are unneeded (they take up a lot of space).
-%
-% BUG: right now, if the numberOfFrames is set too high (400+ for 20 fps),
-% the frame rate will halve for an unknown reason.
+% ROI - region of interest used for cropping images when frames are
+% imported after they are captured.
+
 
 %% Set behavior values for debugging
 % If true, waits for all frames to be grabbed before importing into MATLAB
@@ -35,29 +45,24 @@ importAfterAllFramesGrabbed = true;
 useOldFiles = false; 
 
 %% Run as exe - process
-exePath = "Y:\haider\Code\ISI\General_processing\ISIcode_SheaWells\MdigProcess\vs2012\x64\Debug\MDigProcess.exe";
-%exePath = 'MDigProcess.exe';
-%numberOfFrames = 2030;
-%frameRateFps = 10.0;
-%outFileDirectory = 'C:/Users/haider-lab/Downloads/frames/';
-
 if ~exist(frameOutputDirectory, 'dir')
-    display('frameOutputDirectory does not exist - attempting to create directory')
+    display('FrameOutputDirectory does not exist - attempting to create directory')
     mkdir(frameOutputDirectory)
 end
 
 startTime = datetime(clock);
 if useOldFiles
-    display('skipping frame capture - using old files')
+    display('Skipping frame capture - using old files')
 else
-    display('beginning frame capture')
+    display('Beginning frame capture')
+    %command = sprintf('start /wait %s %d %f %s', exePath, numberOfFrames, frameRateFps, frameOutputDirectory)
     command = sprintf('start %s %d %f %s', exePath, numberOfFrames, frameRateFps, frameOutputDirectory)
     system(command)
 end
 
 %% Wait for process to finish
 if importAfterAllFramesGrabbed
-    display('waiting for process to finish - checking for last file')
+    display('Waiting for process to finish - checking for last file')
     stimTime = numberOfFrames * (1 / frameRateFps);
     pause(stimTime + 3) %previously used stimTime = getParamVal('stim_time')
     %lastFileName = sprintf('%s%d.raw', frameOutputDirectory, numberOfFrames);
@@ -68,7 +73,7 @@ if importAfterAllFramesGrabbed
         d = System.IO.File.GetLastWriteTime(lastFileName);
         creationDateTime = datetime(d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second);
         if creationDateTime < startTime
-            msg = sprintf('WARNING: OLD REPORT FILE FOUND - %s', lastFileName);
+            msg = sprintf('Warning: old report file will be overwritten - %s', lastFileName);
             display(msg)
         end
         
@@ -87,14 +92,11 @@ if importAfterAllFramesGrabbed
 end
 
 %% Import images
-display('beginning frame import')
-% Import raw images into MATLAB while process is running
-%outFileDirectory = 'C:/Users/haider-lab/Downloads/frames/';
-cols = 4090;
-rows = 3072;
+display('Beginning frame import')
+cols = frameDimensions(1); %width
+rows = frameDimensions(2); %height
 size = cols * rows;
 precision = 'uint8=>uint8';
-%numberOfFrames = 400;
 %imgs = cell(1,numberOfFrames); %does not seem to make a difference
 ims = [];
 timevec = [];
@@ -141,11 +143,11 @@ for i = 1:numberOfFrames
     
     % Get file modification time
     d = System.IO.File.GetLastWriteTime(imageFileName); % was GetCreationTime
-    dMilliseconds = (d.Hour*3600 + d.Minute*60 + d.Second) * 1000;
+    dMilliseconds = (d.Hour*3600 + d.Minute*60 + d.Second) * 1000 + d.Millisecond;
     timevec = [timevec double(dMilliseconds)];
     creationDateTime = datetime(d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second);
     if ~useOldFiles && creationDateTime < startTime
-        msg = sprintf('WARNING: OLD FILE IMPORTED - %s%d.raw', frameOutputDirectory, i);
+        msg = sprintf('Warning: old file imported - %s%d.raw', frameOutputDirectory, i);
         display(msg)
     end
     
@@ -156,6 +158,6 @@ for i = 1:numberOfFrames
     ims = [ims {Z_crop}];
     fclose(fin);
 end
-display('done with frame import')
+display('Finished frame import')
 
 end
