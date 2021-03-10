@@ -9,11 +9,8 @@ for i = 1:length(fns)
         ind = str2num(thing.frameNum);
         frameTimes(ind) = str2double(thing.timeSinceEpochInMs);
         d = datetime(frameTimes(ind),'ConvertFrom','epochtime','TicksPerSecond',1000,'TimeZone','UTC');
-        %dMilliseconds = (d.Hour*3600 + d.Minute*60 + d.Second) * 1000 + mod(frameTimes(i),1000);
-        dS = d.Hour*3600 + d.Minute*60 + d.Second;
-        dMs = str2num(char(datetime(frameTimes(ind),'ConvertFrom','epochtime','TicksPerSecond',1000,'TimeZone','UTC','Format','SSS')));
-        dateTimesMs(ind) = dS * 1000 + dMs;
-        %d.TimeZone = 'America/New_York'
+        d.TimeZone = 'America/New_York'
+        dateTimesMs(ind) = (d.Hour*3600 + d.Minute*60 + d.Second) * 1000;
     end
 end
 plot(frameTimes); title('Time Since Epoch'); xlabel('Sample'); ylabel('Time (ms)');
