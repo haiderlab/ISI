@@ -66,9 +66,9 @@ int MosMain(int argc, char *argv[])
    HookDataStruct UserHookData;
 
    // User inputs
-   MIL_INT NumberOfFrames = 20; //set to 20 by default
+   MIL_INT NumberOfFrames = 600; //set to 20 by default
    MIL_DOUBLE AcquisitionFrameRateFps = 0; //set as 0 by default - indicates using existing camera frame rate setting
-   std::string fileDirectory = "C:/Users/haider-lab/Downloads/frames/";
+   std::string fileDirectory = "C:/Users/haider-lab/Downloads/frames/"; //default
    bool enableCLProtocol = true; //enables setting and retrieving camera frame rate property via CL protocol
    bool openFeatureBrowserUponFrameRateChange = true; //open the feature browser to allow user to confirm frame rate
 
@@ -92,8 +92,7 @@ int MosMain(int argc, char *argv[])
    }
 
    /* Allocate defaults. */
-   MappAllocDefault(M_DEFAULT, &MilApplication, &MilSystem, &MilDisplay,
-                                                &MilDigitizer, &MilImageDisp);
+   MappAllocDefault(M_DEFAULT, &MilApplication, &MilSystem, &MilDisplay, &MilDigitizer, &MilImageDisp);
    MdispControl(MilDisplay, M_WINDOW_SHOW, M_DISABLE); //disable showing the display window
 
    /* Allocate the grab buffers and clear them. */
@@ -157,6 +156,8 @@ int MosMain(int argc, char *argv[])
 	   MdigInquireFeature(MilDigitizer, M_FEATURE_VALUE, MIL_TEXT("AcquisitionFrameRate"), M_TYPE_DOUBLE, &CheckFrameRateFps);
 	   MosPrintf(MIL_TEXT("\nInquired frame rate feature = %.1f frames/sec.\n"), CheckFrameRateFps);
    }
+
+   
 
    /* Print a message. */
    //MosPrintf(MIL_TEXT("\nMULTIPLE BUFFERED PROCESSING.\n"));
@@ -259,7 +260,7 @@ MIL_INT MFTYPE ProcessingFunction(MIL_INT HookType, MIL_ID HookId, void* HookDat
    {
    HookDataStruct *UserHookDataPtr = (HookDataStruct *)HookDataPtr;
    MIL_ID ModifiedBufferId;
-   MIL_TEXT_CHAR Text[STRING_LENGTH_MAX]= {MIL_TEXT('\0'),};
+   //MIL_TEXT_CHAR Text[STRING_LENGTH_MAX]= {MIL_TEXT('\0'),};
 
    /* Retrieve the MIL_ID of the grabbed buffer. */
    MdigGetHookInfo(HookId, M_MODIFIED_BUFFER+M_BUFFER_ID, &ModifiedBufferId);
@@ -274,7 +275,9 @@ MIL_INT MFTYPE ProcessingFunction(MIL_INT HookType, MIL_ID HookId, void* HookDat
    MgraText(M_DEFAULT, ModifiedBufferId, STRING_POS_X, STRING_POS_Y, Text);*/
    
    // Export frame as image
-   std::string filenameStr = UserHookDataPtr->FileDirectory + std::to_string((int)UserHookDataPtr->ProcessedImageCount) + ".raw";
+   std::string ms = std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+   std::string filenameStr = UserHookDataPtr->FileDirectory + std::to_string((int)UserHookDataPtr->ProcessedImageCount) + "_" + ms + ".raw";
+   //std::string filenameStr = UserHookDataPtr->FileDirectory + std::to_string((int)UserHookDataPtr->ProcessedImageCount) + ".raw";
    const char* filename = filenameStr.c_str();
    MbufExport(filename, M_RAW, ModifiedBufferId);
 
@@ -282,7 +285,7 @@ MIL_INT MFTYPE ProcessingFunction(MIL_INT HookType, MIL_ID HookId, void* HookDat
    //MimArith(ModifiedBufferId, M_NULL, UserHookDataPtr->MilImageDisp, M_NOT);
    
    
-   #if M_MIL_USE_CE
+   /*#if M_MIL_USE_CE
    // Give execution time to the user interface when the digitizer processing 
    //  queue is full. If necessary, the Sleep value can be increased to give more 
    //  execution time to the user interface.
@@ -293,7 +296,7 @@ MIL_INT MFTYPE ProcessingFunction(MIL_INT HookType, MIL_ID HookId, void* HookDat
          Sleep(2);
       }
    #endif
-   
+   */
 
    return 0;
    }
