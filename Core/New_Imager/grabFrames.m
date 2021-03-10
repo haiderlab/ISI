@@ -38,7 +38,7 @@ function [ims, timevec] = grabFrames(numberOfFrames, frameRateFps, frameDimensio
 % If true, waits for all frames to be grabbed before importing into MATLAB
 % NOTE: must be true right now - simulatenous grabbing and importing is not
 % yet working correctly
-importAfterAllFramesGrabbed = true; 
+importAfterAllFramesGrabbed = true;
 
 % If true, enables program to use already existing files. If false, waits
 % for files to be newly written.
@@ -52,20 +52,22 @@ end
 
 startTime = datetime(clock);
 if useOldFiles
-    display('Skipping frame capture - using old files')
+    disp('Skipping frame capture - using old files')
 else
-    display('Beginning frame capture')
+    disp('Beginning frame capture')
     %command = sprintf('start /wait %s %d %f %s', exePath, numberOfFrames, frameRateFps, frameOutputDirectory)
-    command = sprintf('start %s %d %f %s', exePath, numberOfFrames, frameRateFps, frameOutputDirectory)
-    system(command)
+    command = sprintf('start /realtime %s %d %f %s', exePath, numberOfFrames, frameRateFps, frameOutputDirectory);
+    disp(command)
+    system(command);
 end
 
 %% Wait for process to finish
 if importAfterAllFramesGrabbed
-    display('Waiting for process to finish - checking for last file')
+    disp('Waiting for process to finish')
     stimTime = numberOfFrames * (1 / frameRateFps);
     pause(stimTime + 3) %previously used stimTime = getParamVal('stim_time')
     %lastFileName = sprintf('%s%d.raw', frameOutputDirectory, numberOfFrames);
+    disp('Looking for last file')
     lastFileName = sprintf('%sREPORT.txt', frameOutputDirectory);
     
     % Check if last file already exists and check if old
@@ -73,8 +75,8 @@ if importAfterAllFramesGrabbed
         d = System.IO.File.GetLastWriteTime(lastFileName);
         creationDateTime = datetime(d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second);
         if creationDateTime < startTime
-            msg = sprintf('Warning: old report file will be overwritten - %s', lastFileName);
-            display(msg)
+            %msg = sprintf('Warning: old report file will be overwritten - %s', lastFileName);
+            %disp(msg)
         end
         
         % Wait until new file is overwritten
@@ -92,7 +94,7 @@ if importAfterAllFramesGrabbed
 end
 
 %% Import images
-display('Beginning frame import')
+disp('Beginning frame import')
 cols = frameDimensions(1); %width
 rows = frameDimensions(2); %height
 size = cols * rows;
@@ -102,6 +104,8 @@ ims = [];
 timevec = [];
 for i = 1:numberOfFrames
     imageFileName = sprintf('%s%d.raw', frameOutputDirectory, i);
+    %imageFileName = ls(imageFileName)
+    %regexp(str, '(?<frameNum>\d+)_(?<timeSinceEpochInMs>\d+).raw', 'names')
     
     % Wait for next image file to be creating, signifying current image
     % file is done being written (may not work because of multithreading)
@@ -148,7 +152,7 @@ for i = 1:numberOfFrames
     creationDateTime = datetime(d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second);
     if ~useOldFiles && creationDateTime < startTime
         msg = sprintf('Warning: old file imported - %s%d.raw', frameOutputDirectory, i);
-        display(msg)
+        disp(msg)
     end
     
     %pause(0.01)
@@ -158,6 +162,6 @@ for i = 1:numberOfFrames
     ims = [ims {Z_crop}];
     fclose(fin);
 end
-display('Finished frame import')
+disp('Finished frame import')
 
 end

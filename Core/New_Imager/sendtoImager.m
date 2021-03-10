@@ -69,14 +69,13 @@ switch(cmd(1))
         analogIN.startBackground();
         
         %% managing camera
-        %useNewCameraInterface = true;
         timevecReal = [];
         timeSt = [];
         pause('on');
         c2 = clock;
         timeSt = [timeSt (c2(4)*3600 + c2(5)*60 + c2(6)) *1000];
-        if cameraInterface.useCustom
-            clear handles.m; %close connection to matroxcam
+        if cameraInterface.useExecutable
+            imagerhandles.m = 0; %disconnect matroxcam
             [ims, timevecReal] = grabFrames(j, FPS, cameraInterface.frameDimensions, cameraInterface.exePath, cameraInterface.tempStoragePath, handles.ROI);
         else
             for i = 1:j %Capture images from feed
@@ -107,7 +106,7 @@ switch(cmd(1))
         %save(fname,'ims','timevecReal','timeStim','timeSt','cropDim','timeStimReal','-v7.3')
         save(fname,'ims','timevecReal','timeStim','timeSt','cropDim','timeStimReal','Pstate','-v7.3','-nocompression')
         %quickAnalysis;
-        quickAnalysis2(ims,timevecReal,timeStim,timeSt,cropDim,timeStimReal);
+        %quickAnalysis2(ims,timevecReal,timeStim,timeSt,cropDim,timeStimReal);
         sprintf('Images saved to %s', fname);
         endSave = toc(startSave);
         save([fname '_saveTime'],'endSave');
