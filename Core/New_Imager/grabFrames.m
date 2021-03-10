@@ -160,6 +160,9 @@ if useEpochTime
     title(['Time Between Frame Time Stamps - ' num2str(frameRateFps) ' Hz']);
     xlabel('frame'); ylabel('diff(timevec) in ms');
     disp(['timvec(end)-timevec(1) = ' num2str(timevec(end)-timevec(1)) ' ms']);
+    figure; plot(timevec);
+    title(['Time Stamp Vector of Epoch Times - ' num2str(frameRateFps) ' Hz']);
+    xlabel('frame'); ylabel('time since epoch time (ms)');
     
 else
     disp('Using file modification times as frame time stamps');
