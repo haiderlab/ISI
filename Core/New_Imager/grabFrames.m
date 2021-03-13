@@ -149,8 +149,8 @@ if useEpochTime
             
             % Import file
             I = fread(fin, size, precision);
-            Z = reshape(I, rows, cols);
-            ims{ind} = imcrop(Z,ROI);
+            Z = reshape(I, cols, rows);
+            ims{ind} = imcrop(Z',ROI);
             fclose(fin);
         end
     end

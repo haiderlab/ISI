@@ -69,8 +69,7 @@ set(handles.Lvalue,'String',str2num(tempval{2}));
 fprintf(sit,lightval)
 fclose(handles.sit);
 %matroxlist
-%handles.m = matroxcam(2,"Y:\haider\Docs\Armel Nsiangani\Frame Grabber\Final_DCF.dcf");
-handles.m = matroxcam(2,"\\neuro-cloud\labs\haider\Docs\Armel Nsiangani\Frame Grabber\Final_DCF.dcf");
+handles.m = matroxcam(2,"Y:\haider\Docs\Armel Nsiangani\Frame Grabber\Final_DCF.dcf");
 
 img = snapshot(handles.m);
 handles.im = image(handles.axes2,img);
@@ -114,6 +113,7 @@ else %Live
     handles.live = false;
     img = snapshot(handles.m);
     handles.im = image(handles.axes2,img);
+    %stoppreview;
 
     set(handles.LaunchLive_Button, 'String','Start Live');
 end

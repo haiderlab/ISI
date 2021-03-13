@@ -69,6 +69,7 @@ switch(cmd(1))
         analogIN.startBackground();
         
         %% managing camera
+        startSave = tic;
         timevecReal = [];
         timeSt = [];
         pause('on');
@@ -100,13 +101,13 @@ switch(cmd(1))
         timeStim    = dataTT;
         timeStimReal = dataTTReal;
 
-        startSave = tic;
+        
         disp('Videos Done')
         global Pstate;
         %save(fname,'ims','timevecReal','timeStim','timeSt','cropDim','timeStimReal','-v7.3')
         save(fname,'ims','timevecReal','timeStim','timeSt','cropDim','timeStimReal','Pstate','-v7.3','-nocompression')
         %quickAnalysis;
-        %quickAnalysis2(ims,timevecReal,timeStim,timeSt,cropDim,timeStimReal);
+        quickAnalysis2(ims,timevecReal,timeStim,timeSt,cropDim,timeStimReal);
         sprintf('Images saved to %s', fname);
         endSave = toc(startSave);
         save([fname '_saveTime'],'endSave');
