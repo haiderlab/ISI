@@ -77,6 +77,7 @@ switch(cmd(1))
         timeSt = [timeSt (c2(4)*3600 + c2(5)*60 + c2(6)) *1000];
         if cameraInterface.useExecutable
             imagerhandles.m = 0; %disconnect matroxcam
+            handles.m = 0; %fully disconnect matroxcam
             [ims, timevecReal] = grabFrames(j, FPS, cameraInterface.frameDimensions, cameraInterface.exePath, cameraInterface.tempStoragePath, handles.ROI);
         else
             for i = 1:j %Capture images from feed
