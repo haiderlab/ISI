@@ -39,7 +39,7 @@ function [ims, timevec] = grabFrames(numberOfFrames, frameRateFps, frameDimensio
 %% Set behavior values (mainly for debugging)
 % If true, uses epoch time
 useEpochTime = true;
-timeZone = 'America/New_York';
+timeZone = 'local';
 showPlots = true;
 
 % If true, waits for all frames to be grabbed before importing into MATLAB
