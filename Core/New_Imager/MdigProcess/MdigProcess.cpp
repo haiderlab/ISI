@@ -1,7 +1,6 @@
 /***************************************************************************************/
 /*
  * File name: MdigProcess.cpp
- * Last modified: 03/02/2021
  *
  * Synopsis:  This program uses the MdigProcess() function and its multiple
  *            buffering acquisition to do robust real-time processing to gather frames.
@@ -66,7 +65,7 @@ int MosMain(int argc, char *argv[])
    HookDataStruct UserHookData;
 
    // User inputs
-   MIL_INT NumberOfFrames = 600; //set to 20 by default
+   MIL_INT NumberOfFrames = 20; //set to 20 by default
    MIL_DOUBLE AcquisitionFrameRateFps = 0; //set as 0 by default - indicates using existing camera frame rate setting
    std::string fileDirectory = "C:/Users/haider-lab/Downloads/frames/"; //default
    bool enableCLProtocol = true; //enables setting and retrieving camera frame rate property via CL protocol
