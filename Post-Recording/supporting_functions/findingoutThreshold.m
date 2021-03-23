@@ -1,0 +1,12 @@
+figure;movMix = nanmean(b(:,:,:,var_vec>0),4); % movMix has only one iteration. i.e fs * period frames only
+subplot(2,3,1); g_map(movMix,timevecReal,inputFreq,plotbit);title('threshold = 0');
+movMix = nanmean(b(:,:,:,var_vec>0.6),4); % movMix has only one iteration. i.e fs * period frames only
+subplot(2,3,2); g_map(movMix,timevecReal,inputFreq,plotbit);title('threshold = 0.6');
+movMix = nanmean(b(:,:,:,var_vec>0.7),4); % movMix has only one iteration. i.e fs * period frames only
+subplot(2,3,3); g_map(movMix,timevecReal,inputFreq,plotbit);title('threshold = 0.7');
+movMix = nanmean(b(:,:,:,var_vec>1),4); % movMix has only one iteration. i.e fs * period frames only
+subplot(2,3,4); g_map(movMix,timevecReal,inputFreq,plotbit);title('threshold = 1');
+movMix = nanmean(b(:,:,:,var_vec>1.5),4); % movMix has only one iteration. i.e fs * period frames only
+subplot(2,3,5); g_map(movMix,timevecReal,inputFreq,plotbit);title('threshold = 1.5');
+movMix = nanmean(b(:,:,:,var_vec>2),4); % movMix has only one iteration. i.e fs * period frames only
+subplot(2,3,6); g_map(movMix,timevecReal,inputFreq,plotbit);title('threshold = 2');
