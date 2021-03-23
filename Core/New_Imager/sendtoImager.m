@@ -1,7 +1,7 @@
 %% Testing sendtoImager v3 - Replaces built in sendtoImager
 
 function sendtoImager(cmd)
-global imagerhandles h FPS GUIhandles analyzer dataTT dataTTReal analogIN
+global imagerhandles h FPS GUIhandles analyzer dataTT dataTTReal analogIN cameraInterface
 
 switch(cmd(1))
     case 'A'  %% animal
@@ -61,32 +61,36 @@ switch(cmd(1))
         %recording part
         handles = imagerhandles;
         total_time =  GUIhandles.main.timetxt;
-        %total_time = 10;
-        
-        j = total_time * FPS; %recording Time is in seconds, Frame rate is in FPS
+        j = total_time * FPS; %total number of frames to record
         ims = [];
-        
         
         configSyncInput
         lh = analogIN.addlistener('DataAvailable', @plotData);
         analogIN.startBackground();
         
         %% managing camera
+        startSave = tic;
         timevecReal = [];
         timeSt = [];
         pause('on');
         c2 = clock;
         timeSt = [timeSt (c2(4)*3600 + c2(5)*60 + c2(6)) *1000];
-        for i = 1:j %Capture images from feed
-            % Recording frame time stamps
-            c2 = clock;
-            timevecReal = [timevecReal (c2(4)*3600 + c2(5)*60 + c2(6)) *1000];
-            % Record & save snaps
-            frame = snapshot(handles.m);
-            I = imcrop(frame,handles.ROI);
-            %I = cropDim;
-            ims = [ims {I}];
-            pause((1/FPS)- 0.035)
+        if cameraInterface.useExecutable
+            imagerhandles.m = 0; %disconnect matroxcam
+            handles.m = 0; %fully disconnect matroxcam
+            [ims, timevecReal] = grabFrames(j, FPS, cameraInterface.frameDimensions, cameraInterface.exePath, cameraInterface.tempStoragePath, handles.ROI);
+        else
+            for i = 1:j %Capture images from feed
+                % Recording frame time stamps
+                c2 = clock;
+                timevecReal = [timevecReal (c2(4)*3600 + c2(5)*60 + c2(6)) *1000];
+                % Record & save snaps
+                frame = snapshot(handles.m);
+                I = imcrop(frame,handles.ROI);
+                %I = cropDim;
+                ims = [ims {I}];
+                pause((1/FPS)- 0.035)
+            end
         end
         c2 = clock;
         timeSt = [timeSt (c2(4)*3600 + c2(5)*60 + c2(6)) *1000];
@@ -94,11 +98,11 @@ switch(cmd(1))
         
         ims;
         %
-        cropDim = imcrop(frame,handles.ROI);
+        cropDim = imcrop(ims{1},handles.ROI);
         timeStim    = dataTT;
         timeStimReal = dataTTReal;
 
-        startSave = tic;
+        
         disp('Videos Done')
         global Pstate;
         %save(fname,'ims','timevecReal','timeStim','timeSt','cropDim','timeStimReal','-v7.3')
