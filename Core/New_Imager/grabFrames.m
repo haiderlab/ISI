@@ -38,6 +38,7 @@ function [ims, timevec] = grabFrames(numberOfFrames, frameRateFps, frameDimensio
 % If true, uses epoch time
 useEpochTime = true;
 timeZone = 'America/New_York';
+showPlots = true;
 
 % If true, waits for all frames to be grabbed before importing into MATLAB
 % NOTE: must be true right now - simulatenous grabbing and importing is not
@@ -55,7 +56,7 @@ frameOutputDirectory = fullfile(frameOutputDirectory,'\');
 
 %% Run as exe - process
 if ~exist(frameOutputDirectory, 'dir')
-    display('FrameOutputDirectory does not exist - attempting to create directory')
+    disp('FrameOutputDirectory does not exist - attempting to create directory')
     mkdir(frameOutputDirectory)
 end
 
@@ -81,7 +82,7 @@ end
 if importAfterAllFramesGrabbed
     disp('Waiting for process to finish')
     stimTime = numberOfFrames * (1 / frameRateFps);
-    pause(stimTime + 15) %previously used stimTime = getParamVal('stim_time')
+    pause(stimTime + 8) %previously used stimTime = getParamVal('stim_time')
     %lastFileName = sprintf('%s%d.raw', frameOutputDirectory, numberOfFrames);
     disp('Looking for last file')
     lastFileName = sprintf('%sREPORT.txt', frameOutputDirectory);
@@ -104,13 +105,14 @@ if importAfterAllFramesGrabbed
     end
     
     while ~isfile(lastFileName)
-        pause(10)
+        pause(5)
     end
     %pause(0.1)
 end
 
 %% Import images
 disp('Beginning frame import')
+startFrameImport = tic;
 cols = frameDimensions(1); %width
 rows = frameDimensions(2); %height
 size = cols * rows;
@@ -156,13 +158,17 @@ if useEpochTime
     end
     
     % Plot difference b/t time stamps
-    figure; plot(diff(timevec),'.');
-    title(['Time Between Frame Time Stamps - ' num2str(frameRateFps) ' Hz']);
-    xlabel('frame'); ylabel('diff(timevec) in ms');
-    disp(['timvec(end)-timevec(1) = ' num2str(timevec(end)-timevec(1)) ' ms']);
-    figure; plot(timevec);
-    title(['Time Stamp Vector of Epoch Times - ' num2str(frameRateFps) ' Hz']);
-    xlabel('frame'); ylabel('time since epoch time (ms)');
+    if showPlots
+        difftime = diff(timevec);
+        figure; plot(difftime,'.');
+        title(['Time Between Frame Time Stamps - ' num2str(frameRateFps) ' Hz']);
+        xlabel('frame'); ylabel('difference in time (ms)');
+        disp(['timevec(end)-timevec(1) = ' num2str(timevec(end)-timevec(1)) ' ms']);
+        disp(['diff(timevec): mean = ' num2str(mean(difftime)) ', std = ' num2str(std(difftime))]);
+        figure; plot(timevec);
+        title(['Time Stamp Vector - ' num2str(frameRateFps) ' Hz']);
+        xlabel('frame'); ylabel('time (ms)');
+    end
     
 else
     disp('Using file modification times as frame time stamps');
@@ -227,7 +233,8 @@ else
         fclose(fin);
     end
 end
-disp('Finished frame import')
+finishedFrameImport = toc(startFrameImport);
+fprintf('Finished frame import in %4.2f seconds\n',finishedFrameImport);
 
 % Clear temporary folder
 if useEpochTime
