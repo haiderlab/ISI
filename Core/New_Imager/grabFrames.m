@@ -18,10 +18,12 @@ function [ims, timevec] = grabFrames(numberOfFrames, frameRateFps, frameDimensio
 % take numberOfFrames, frameRateFps, and frameOutputDirectory as command
 % line arguments (matching this same order). Frames should be output to the
 % frameOutputDirectory with numeric names starting from 1 with the .raw
-% extension (e.g. 1.raw, 2.raw, etc.). Once grabbing is done, the
-% executable should save a REPORT.txt file to indicate completion. Note
-% that this function uses LastWriteTime as the time stamp for the captured
-% frames, so it is best to output the frames as soon as they are grabbed.
+% extension (e.g. 1.raw, 2.raw, etc.) if you'd like to use LastWriteTime
+% for time stamps. Since these time stamps can be inaccurate, it is better
+% to export images with names including time since epoch in milliseconds 
+% (e.g. 1_1615829109000.raw, 2_1615829109100.raw, etc.) so the time stamp 
+% does not depend on the image write time. Once grabbing is done, the
+% executable should save a REPORT.txt file to indicate completion.
 %
 % frameOutputDirectory - where the frame grabber saves the raw images to
 % the disk. This should be an absolute/full directory path with a trailing 
