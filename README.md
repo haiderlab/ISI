@@ -11,7 +11,7 @@ Contains old code - used primarily for reference and is unnecessary for code exe
 ## Post-Recording
 Contains packages for post-recording analysis.
 
-## Installation
+## Installation & Usage
 See the PDF guide here.
 Contains:
   * List of equipment
