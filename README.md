@@ -5,9 +5,6 @@ A repository for acquisition and analysis of intrinsic signal for construction o
 ## Core
 Contains packages for visual stimulus display, camera control, and frame acquisition.
 
-## Legacy
-Contains old code - used primarily for reference and is unnecessary for code execution.
-
 ## Post-Recording
 Contains packages for post-recording analysis.
 
