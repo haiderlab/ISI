@@ -1,3 +1,0 @@
-0 degree position on Surg. rig = x_pos : 1080
-70 degree position on Surg. rig = xpos : 2300
-[270,90,270,90,270,90,270,90,270,90,270,90,270,90,270,90,270,90,270,90]

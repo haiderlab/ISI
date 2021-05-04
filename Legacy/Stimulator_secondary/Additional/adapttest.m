@@ -1,3 +1,0 @@
-
-screenconfig
-oriAdaptLong
