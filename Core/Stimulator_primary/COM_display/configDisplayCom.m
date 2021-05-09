@@ -1,5 +1,3 @@
-
-
 function configDisplayCom
 
 global DcomState Mstate

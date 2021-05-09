@@ -11,7 +11,7 @@ if n > 0
 end
 
 %Wait...
-n = 0;  %Need this, or it won't enter next loop (if there were leftover bits)!!!!
+n = 0;  %Need this, or it won't enter next loop (if there were leftover bits)
 while n == 0
     n = get(comhandle,'BytesAvailable'); %Wait for response
 end

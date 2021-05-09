@@ -26,10 +26,9 @@ if bflag  %if it is a blank condition
     
 else %if it is not a blank condition
     
-    %%%Send the contrast in Pstate in case last trial was a blank%%%
+    %Send the contrast in Pstate in case last trial was a blank
     pval = getParamVal('contrast');
     msg = sprintf('%s;%s=%.4f',msg,'contrast',pval);    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     Nparams = length(looperInfo.conds{cond}.symbol);
     for i = 1:Nparams

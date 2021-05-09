@@ -147,13 +147,11 @@ while ~keyIsDown
 end
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Screen(screenPTR, 'FillRect', Pstruct.background)
 Screen(screenPTR, 'Flip');
 
 Screen('Close')  %Get rid of all textures/offscreen windows
-
 
 
 function [L W] = getbarDim(state,valdom,pixpercmX,pixpercmY)

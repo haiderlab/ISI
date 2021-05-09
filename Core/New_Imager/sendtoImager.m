@@ -1,4 +1,4 @@
-%% Testing sendtoImager v3 - Replaces built in sendtoImager
+%% sendtoImager v3 - Replaces built in sendtoImager
 
 function sendtoImager(cmd)
 global imagerhandles h FPS GUIhandles analyzer dataTT dataTTReal analogIN cameraInterface
@@ -7,37 +7,23 @@ switch(cmd(1))
     case 'A'  %% animal
         set(findobj('Tag','animal'),'String',deblank(cmd(3:end)));
         deblank(cmd(3:end))
-        %sprintf('case A activated')
     case 'E' %% expt
         set(findobj('Tag','exptcb'),...
             'String',num2str(deblank(cmd(3:end))));
-        %sprintf('case E activated')
     case 'U'  %% unit
         set(findobj('Tag','unitcb'),...
             'String',num2str(deblank(cmd(3:end))));
-        %sprintf('case U activated')
-        %     case 'T'  %% time tag
-        %         set(findobj('Tag','tagtxt'),...
-        %             'String',deblank(sprintf('%03d',str2num(cmd(3:end)))));
-        
     case 'M'  %% set mode
         m = str2num(cmd(3:end-1));
-        %sprintf('case M activated')
     case 'I'  %% total_time
         set(findobj('Tag','timetxt'),'String',deblank(cmd(3:end)));
         preallocateTensor
-        %sprintf('case I activated')
         total_time = str2num(cmd(3:end));
-        
-        
-        
     case 'S'  %% start sampling...
         sprintf('case S activated')
         trial = str2num(cmd(3:end));
         
-        global nframes maxframes ...
-            Tfname running NBUF parport;
-        
+        global nframes maxframes Tfname running NBUF parport;
         
         animal = get(findobj('Tag','animal'),'String');
         %animal = 'xx1';
@@ -94,14 +80,11 @@ switch(cmd(1))
         end
         c2 = clock;
         timeSt = [timeSt (c2(4)*3600 + c2(5)*60 + c2(6)) *1000];
-        %%
         
         ims;
-        %
         cropDim = imcrop(ims{1},handles.ROI);
         timeStim    = dataTT;
         timeStimReal = dataTTReal;
-
         
         disp('Videos Done')
         global Pstate;

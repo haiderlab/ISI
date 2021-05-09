@@ -1,13 +1,12 @@
 function varphase = g_map(movMix,timevecReal,inputFreq,plotbit)
 stack_b = movMix(:,:,11:end);
 [s1,s2,s3] = size(stack_b);
-timeAdjustedDiff_f = diff(timevecReal(2:end))/1000; % what is it? -donghoon
+timeAdjustedDiff_f = diff(timevecReal(2:end))/1000;
 Fs_f = 1 ./ mode(timeAdjustedDiff_f);
 freq_indices = round(inputFreq/Fs_f*s3);   
 DFTvector = exp(-2*pi*1i/s3*freq_indices*(0:s3-1));
 stack_a = reshape(stack_b,s1*s2,s3);
 vals = stack_a * DFTvector';
-
 
 valmap = reshape(vals,s1,s2);
 phasemap = angle(valmap);

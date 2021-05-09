@@ -1,12 +1,10 @@
 function playrain
 
-
 global Mstate screenPTR screenNum loopTrial
 
 global GtxtrAll OriAll StimLoc TDim daq  %Created in makeGratingTexture
 
 global Stxtr %Created in makeSyncTexture
-
 
 P = getParamStruct;
 
@@ -49,7 +47,6 @@ end
 
 %%%%%Play whats in the buffer (the stimulus)%%%%%%%%%%
 
-
 for i = 1:length(GtxtrAll)
     
     Screen('DrawTextures', screenPTR, [GtxtrAll{i} Stxtr(2-rem(i,2))],...
@@ -59,14 +56,11 @@ for i = 1:length(GtxtrAll)
 %     digWord = bitxor(digWord,4);  %toggle only the 3rd bit on each grating update
 %     DaqDOut(daq,0,digWord); 
     
-    for j = 2:P.h_per                  %sync flips on each update    
-        
+    for j = 2:P.h_per                  %sync flips on each update
         Screen('DrawTextures', screenPTR, [GtxtrAll{i} Stxtr(2-rem(i,2))],...
             [StimPiece SyncPiece],[StimLoc{i,j} SyncLoc],[OriAll{i} 0]);          
         Screen(screenPTR, 'Flip');
-        
     end
-
 end
 
 %%%Play postdelay %%%%

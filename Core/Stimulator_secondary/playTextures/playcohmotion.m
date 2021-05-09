@@ -30,10 +30,6 @@ sizeDotsCm=Pstruct.sizeDots*2*pi/360*Mstate.screenDist;
 sizeDotsPx=round(sizeDotsCm*pixpercmX);
 
 
-
-
-
-
 %%%%%%%%%%%%%%%%%%
 
 
@@ -79,7 +75,7 @@ for i = 2:Npreframes
 end
 
 
-%%%%%Play whats in the buffer (the stimulus)%%%%%%%%%%
+%%%%%Play what's in the buffer (the stimulus)%%%%%%%%%%
 
 Screen('DrawDots', screenPTR, DotFrame{1}, sizeDotsPx, [r g b],...
     [Pstruct.x_pos Pstruct.y_pos],Pstruct.dotType);

@@ -1,4 +1,3 @@
-
 function varargout = Imager(varargin)
 % IMAGER MATLAB code for Imager.fig
 %      IMAGER, by itself, creates a new IMAGER or raises the existing
@@ -121,7 +120,6 @@ end
 guidata(hObject, handles);
 %Toggles live video
 end
-    
 
 % --- Executes on button press in ViewROI.
 function ViewROI_Callback(hObject, eventdata, handles)
@@ -160,9 +158,7 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 
 % Hint: delete(hObject) closes the figure
 delete(hObject);
-
 end
-
 
 % --- Executes on button press in CaptureImage.
 function CaptureImage_Callback(hObject, eventdata, handles)
@@ -180,13 +176,11 @@ global ROIcrop
     ROIcrop = handles.ROI;
 
 guidata(hObject, handles);
-
 end
 
 function figure1_DeleteFcn(hObject,eventdata,handles)
 delete(hObject)
 end
-
 
 % --- Executes on slider movement.
 function Illumination_Callback(hObject, eventdata, handles)
@@ -221,8 +215,6 @@ if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColo
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
 end
-
-
 
 % --- Executes during object creation, after setting all properties.
 function ROI_size_CreateFcn(hObject, eventdata, handles)
@@ -286,11 +278,7 @@ guidata(hObject, handles);
 
 %Save images
 save('imager_ImageRecording','handles')
-
-
-
 end
-
 
 function FrameRate_Callback(hObject, eventdata, handles)
 % hObject    handle to FrameRate (see GCBO)
@@ -329,14 +317,9 @@ sendtoImager_test
 sprintf('File Saved')
 end
 
-
-
-
 function Lvalue_Callback(hObject, eventdata, handles)
 
 end
-
-
 
 % --- Executes during object creation, after setting all properties.
 function Lvalue_CreateFcn(hObject, eventdata, handles)

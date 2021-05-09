@@ -78,8 +78,6 @@ Screen(screenPTR, 'FillRect', Pstruct.background)
 %Wake up the daq:
 %DaqDOut(daq, 0, 0); %I do this at the beginning because it improves timing on the first call to daq below
 
-   
-
 %%%Play predelay %%%%
 Screen('DrawTexture', screenPTR, Stxtr(1),SyncPiece,SyncLoc);
 Screen(screenPTR, 'Flip');
@@ -91,8 +89,6 @@ for i = 2:Npreframes
     Screen('DrawTexture', screenPTR, Stxtr(2),SyncPiece,SyncLoc);
     Screen(screenPTR, 'Flip');
 end
-
-
 
 %%%%%%Play sound also%%%%%%
 switch Pstruct.sound_type

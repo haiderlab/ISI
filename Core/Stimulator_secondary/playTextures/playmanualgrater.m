@@ -162,7 +162,6 @@ while ~keyIsDown
 end
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Screen(screenPTR, 'FillRect', Pstruct.background)
 Screen(screenPTR, 'Flip');

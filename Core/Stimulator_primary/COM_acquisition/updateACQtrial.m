@@ -1,6 +1,6 @@
 function updateACQtrial(trialno)
 
-%%%%%%%%Update ScanImage with Trial/Cond/Rep %%%%%%%%%%%%%%%%%
+% Update ScanImage with Trial/Cond/Rep
 
 global looperInfo Lstate
 
