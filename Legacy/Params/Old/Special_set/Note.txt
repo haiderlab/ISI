@@ -1,0 +1,13 @@
+this is a special set to test the phase change of stimulus 
+
+During experiment, change valus of x_pos to:
+
+1) x_pos = 960 (45 degree)
+2) x_pos = 1440 (67.5 degree)
+3) x_pos = 1920 (90 degree)
+4) x_pos = 2400 (112.5 degree)
+5) x_pos = 2880 (135 degree)
+
+Before attempting to run at these locations separetaly, try putting a looper vector 
+
+x_pos [960,1440,1920,2400,2880]
